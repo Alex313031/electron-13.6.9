@@ -38,7 +38,7 @@ vars = {
   'apply_patches': True,
 
   # To use an mtime cache for patched files to speed up builds.
-  'use_mtime_cache': True,
+  'use_mtime_cache': False,
 
   # To allow in-house builds to checkout those manually.
   'checkout_chromium': True,

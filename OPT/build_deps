@@ -1,0 +1,1 @@
+sudo apt-get install build-essential clang libdbus-1-dev libgtk-3-dev libnotify-dev gnome-keyring libasound2-dev libcap-dev libcups2-dev libxtst-dev libxss1 libnss3-dev gcc-multilib g++-multilib curl gperf bison python3-dbusmock openjdk-8-jre git libsecret-1-dev libx11-dev libxkbfile-dev nodejs npm node-gyp node-istanbul python2.7-dev
