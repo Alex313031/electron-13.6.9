@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Kleinschmidt <jkleinsc@github.com>
+Date: Thu, 20 Jun 2019 16:49:25 -0400
+Subject: put_back_deleted_colors_for_autofill.patch
+
+https://chromium-review.googlesource.com/c/chromium/src/+/1652925 removed colors as they are no longer
+needed in chromium but our autofill implementation uses them.  This patch can be removed if we refactor
+our autofill implementation to work like Chromium's.
+
+diff --git a/ui/native_theme/common_theme.cc b/ui/native_theme/common_theme.cc
+index cdd49c092b611176f27fd581cb56c153b6583eeb..384e639e1b6739536bb10fcabe2c3f895d7bd635 100644
+--- a/ui/native_theme/common_theme.cc
++++ b/ui/native_theme/common_theme.cc
+@@ -68,6 +68,14 @@ base::Optional<SkColor> GetDarkSchemeColor(NativeTheme::ColorId color_id,
+     case NativeTheme::kColorId_FocusedBorderColor:
+       return gfx::kGoogleBlue400;
+ 
++    // Results Tables
++    case NativeTheme::kColorId_ResultsTableNormalBackground:
++      return SkColorSetRGB(0x28, 0x28, 0x28);
++    case NativeTheme::kColorId_ResultsTableNormalText:
++      return SK_ColorWHITE;
++    case NativeTheme::kColorId_ResultsTableDimmedText:
++      return SkColorSetA(base_theme->GetSystemColor(NativeTheme::kColorId_ResultsTableNormalText), 0x80);
++
+     // Button
+     case NativeTheme::kColorId_ProminentButtonColor:
+       return gfx::kGoogleBlue300;
+@@ -551,6 +559,18 @@ SkColor GetDefaultColor(NativeTheme::ColorId color_id,
+     case NativeTheme::kColorId_WindowBackground:
+       return SK_ColorWHITE;
+ 
++    // Results Tables
++    case NativeTheme::kColorId_ResultsTableNormalBackground:
++      return SK_ColorWHITE;
++    case NativeTheme::kColorId_ResultsTableHoveredBackground:
++      return SkColorSetA(base_theme->GetSystemColor(
++                             NativeTheme::kColorId_ResultsTableNormalText),
++                         0x0D);
++    case NativeTheme::kColorId_ResultsTableNormalText:
++      return SK_ColorBLACK;
++    case NativeTheme::kColorId_ResultsTableDimmedText:
++      return SkColorSetRGB(0x64, 0x64, 0x64);
++
+     case NativeTheme::kColorId_NumColors:
+       // Keeping the kColorId_NumColors case instead of using the default case
+       // allows ColorId additions to trigger compile error for an incomplete
+diff --git a/ui/native_theme/native_theme_color_id.h b/ui/native_theme/native_theme_color_id.h
+index 60197576c71e86cd3ad17e83bfc699509c365d6c..426504eec69da7100c6484271fb35f1a69f84a43 100644
+--- a/ui/native_theme/native_theme_color_id.h
++++ b/ui/native_theme/native_theme_color_id.h
+@@ -151,6 +151,11 @@
+   OP(kColorId_TableHeaderText),                                                \
+   OP(kColorId_TableHeaderBackground),                                          \
+   OP(kColorId_TableHeaderSeparator),                                           \
++  /* Results Tables, such as the omnibox */                                    \
++  OP(kColorId_ResultsTableNormalBackground),                                   \
++  OP(kColorId_ResultsTableHoveredBackground),                                  \
++  OP(kColorId_ResultsTableNormalText),                                         \
++  OP(kColorId_ResultsTableDimmedText),                                         \
+   /* Colors for the material spinner (aka throbber). */                        \
+   OP(kColorId_ThrobberSpinningColor),                                          \
+   OP(kColorId_ThrobberWaitingColor),                                           \
+diff --git a/ui/native_theme/native_theme_win.cc b/ui/native_theme/native_theme_win.cc
+index 68b798fc755a3ec3130e43254b6ec306d30a19fa..13a1f3763d137667220325237c419257e9868a8d 100644
+--- a/ui/native_theme/native_theme_win.cc
++++ b/ui/native_theme/native_theme_win.cc
+@@ -659,6 +659,18 @@ base::Optional<SkColor> NativeThemeWin::GetPlatformHighContrastColor(
+     case kColorId_ThrobberWaitingColor:
+       return system_colors_[SystemThemeColor::kGrayText];
+ 
++    // Results Tables
++    case kColorId_ResultsTableNormalBackground:
++      return system_colors_[SystemThemeColor::kWindow];
++    case kColorId_ResultsTableHoveredBackground:
++      return color_utils::AlphaBlend(system_colors_[SystemThemeColor::kWindowText],
++                                     system_colors_[SystemThemeColor::kWindow], 0.25f);
++    case kColorId_ResultsTableNormalText:
++      return system_colors_[SystemThemeColor::kWindowText];
++    case kColorId_ResultsTableDimmedText:
++      return color_utils::AlphaBlend(system_colors_[SystemThemeColor::kWindowText],
++                                     system_colors_[SystemThemeColor::kWindow], 0.5f);
++
+     // Button Background
+     case kColorId_ButtonColor:
+     case kColorId_MenuBackgroundColor:
