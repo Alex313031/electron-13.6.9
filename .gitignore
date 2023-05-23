@@ -48,8 +48,8 @@ compile_commands.json
 .npmrc
 
 # Generated API definitions
-electron-api.json
-electron.d.ts
+/electron-api.json
+/electron.d.ts
 
 # Spec hash calculation
 spec/.hash
