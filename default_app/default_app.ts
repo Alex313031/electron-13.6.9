@@ -47,11 +47,13 @@ async function createWindow (backgroundColor?: string) {
   const options: Electron.BrowserWindowConstructorOptions = {
     width: 960,
     height: 620,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     backgroundColor,
     webPreferences: {
       preload: path.resolve(__dirname, 'preload.js'),
       contextIsolation: true,
+      experimentalFeatures: true,
+      devTools: true,
       sandbox: true,
       enableRemoteModule: false
     },
